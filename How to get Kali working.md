@@ -15,20 +15,10 @@ Port Mode: **Host Pipe**
 Uncheck "Connect to existing pipe/socket"
 Path: **/tmp/kali**
 
-### Grub edit
+Do this before you start your Kali VM.
+This will just add a serial connection to the VM.
 
-1. When at GRUB screen, hit '**e**' 
-2. Add the following to the end of "...*nosplash quiet*" line
-
-    `console=ttyS0 console=tty0 ignore_loglevel` to grub config on boot
-
-    (ref; [https://www.virtualbox.org/wiki/Serial_redirect](https://www.virtualbox.org/wiki/Serial_redirect))
-
-### Make Grub changes permanent
-
-1. Edit ***/etc/default/grub***
-`GRUB_CMDLINE_LINUX="console=tty0 console=ttyS0,115200n8"`
-2. `sudo update-grub`
+On the Host machine, setup minicom and configure it like this
 
 ### Setup minicom
 
@@ -44,8 +34,30 @@ Exit
 
 ### Start Serial port on Host
 
-1. 
-
-`socat unix-connect:/dev/vboxttyS0 -,raw,echo=0`
+1. `socat unix-connect:/tmp/kali -,raw,echo=0`
 
 (ref: [https://superuser.com/questions/1223865/linux-connect-from-host-to-virtualbox-guest-over-virtual-serial-port](https://superuser.com/questions/1223865/linux-connect-from-host-to-virtualbox-guest-over-virtual-serial-port))
+
+This will setup up your host machine to listen the socket `/tmp/kali` from the VM and display it to screen.
+This command will seem to hang when you run it, but it's just waiting for data on the other end of the pipe.
+
+Now, start the VM, then when at the GRUB screen
+
+### Grub edit
+
+1. When at GRUB screen, hit '**e**' 
+2. Add the following to the end of "...*nosplash quiet*" line
+
+    `console=ttyS0 console=tty0 ignore_loglevel` to grub config on boot
+
+    (ref; [https://www.virtualbox.org/wiki/Serial_redirect](https://www.virtualbox.org/wiki/Serial_redirect))
+
+You should now start seeing the console output on the `socat` terminal.
+
+Note that this GRUB config change is nor permanent, so when you reboot it wont persist. To do so, do the following
+
+### To make Grub changes permanent
+
+1. Edit ***/etc/default/grub***
+`GRUB_CMDLINE_LINUX="console=tty0 console=ttyS0,115200n8"`
+2. `sudo update-grub`
