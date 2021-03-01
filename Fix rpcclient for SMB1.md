@@ -18,8 +18,6 @@ The cause is not samba (smb.conf) not having a fallback protocol
 
 ## Fix smb.conf
 
-[smb.patch](Fix%20rpcclient%20for%20SMB1%20183a9644bd0d4246a7cff83c2fc1b564/smb.patch)
-
 1. make a copy of smb.conf
 `sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bakup` 
 2. open smb.conf file 
